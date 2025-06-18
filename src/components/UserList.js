@@ -5,8 +5,8 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({ name: '', email: '' });
 
-  // 🔗 Base URL of your deployed backend on Render
-  const baseUrl = "https://user-management-backend.onrender.com/api/users";
+  // ✅ Live backend URL from Render
+  const baseUrl = "https://user-management-backend-82nt.onrender.com/api/users";
 
   useEffect(() => {
     loadUsers();
