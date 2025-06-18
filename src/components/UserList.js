@@ -5,51 +5,70 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({ name: '', email: '' });
 
+  // 🔗 Base URL of your deployed backend on Render
+  const baseUrl = "https://user-management-backend.onrender.com/api/users";
+
   useEffect(() => {
     loadUsers();
   }, []);
 
   const loadUsers = async () => {
-    const res = await axios.get('http://localhost:8080/api/users');
-    setUsers(res.data);
+    try {
+      const res = await axios.get(baseUrl);
+      setUsers(res.data);
+    } catch (err) {
+      alert("Failed to fetch users: " + err.message);
+    }
   };
 
   const createUser = async () => {
-    if (!form.name || !form.email) return alert("Both fields required");
-    await axios.post('http://localhost:8080/api/users', form);
-    setForm({ name: '', email: '' });
-    loadUsers();
+    if (!form.name || !form.email) return alert("Both fields are required");
+    try {
+      await axios.post(baseUrl, form);
+      setForm({ name: '', email: '' });
+      loadUsers();
+    } catch (err) {
+      alert("Failed to create user: " + err.message);
+    }
   };
-  
+
   const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:8080/api/users/${id}`);
-    loadUsers();
+    try {
+      await axios.delete(`${baseUrl}/${id}`);
+      loadUsers();
+    } catch (err) {
+      alert("Failed to delete user: " + err.message);
+    }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto' }}>
       <h2>User Manager</h2>
       <input
         type="text"
         placeholder="Name"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
+        style={{ display: 'block', marginBottom: '10px', width: '100%' }}
       />
       <input
         type="email"
         placeholder="Email"
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
+        style={{ display: 'block', marginBottom: '10px', width: '100%' }}
       />
-      <button onClick={createUser}>Add User</button>
+      <button onClick={createUser} style={{ marginBottom: '20px' }}>
+        Add User
+      </button>
 
       <ul>
-      {users.map((u) => (
-        <li key={u.id}>
-            {u.name} ({u.email}) <button onClick={() => deleteUser(u.id)}>❌</button>
-        </li>
+        {users.map((u) => (
+          <li key={u.id}>
+            {u.name} ({u.email}){" "}
+            <button onClick={() => deleteUser(u.id)}>❌</button>
+          </li>
         ))}
-
       </ul>
     </div>
   );
